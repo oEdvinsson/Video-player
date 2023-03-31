@@ -11,6 +11,11 @@ const fullscreenBtn = document.querySelector('.fullscreen');
 
 // Play & Pause ----------------------------------- //
 
+function showPlayIcon() {
+    playBtn.classList.replace('fa-pause', 'fa-play');
+    playBtn.setAttribute('title', 'Play');
+}
+
 function togglePlay() {
     if (video.paused) {
         video.play();
@@ -18,16 +23,35 @@ function togglePlay() {
         playBtn.setAttribute('title', 'Pause');
     } else {
         video.pause();
-        playBtn.classList.replace('fa-pause', 'fa-play');
-        playBtn.setAttribute('title', 'Play');
+        showPlayIcon();
     }
 }
 
+// On Video End, show play button icon
+video.addEventListener('ended', showPlayIcon);
 
 
 // Progress Bar ---------------------------------- //
 
+// Calculate display time format
+function displayTime(time) {
+    const minutes = Math.floor(time / 60);
+    let seconds = Math.floor(time % 60);
+    seconds = seconds > 9 ? seconds : `0${seconds}`;
+    return `${minutes}:${seconds}`;
+}
 
+// Update progress bar as video plays
+function updateProgress() {
+    progressBar.style.width = `${(video.currentTime / video.duration) * 100}%`;
+    currentTime.textContent = `${displayTime(video.currentTime)} /`;
+    duration.textContent = `${displayTime(video.duration)}`;
+}
+
+// Click to seek within the video
+function setProgress(e) {
+    console.log(e);
+}
 
 // Volume Controls --------------------------- //
 
@@ -42,3 +66,6 @@ function togglePlay() {
 // Event Listeners
 playBtn.addEventListener('click', togglePlay);
 video.addEventListener('click', togglePlay);
+video.addEventListener('timeupdate', updateProgress);
+video.addEventListener('canplay', updateProgress);
+progressBar.addEventListener('click', setProgress);
